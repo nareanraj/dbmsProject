@@ -3,12 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
-
 app = Flask(__name__)
 
 # ---------------- DATABASE CONFIG ----------------
-# SQLite connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'  # <-- Changed here
+# MySQL connection
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Narean%4025@localhost/blog_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -16,7 +15,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
-
 # ---------------- MODELS ----------------
 
 class Post(db.Model):
@@ -41,11 +39,13 @@ class Comment(db.Model):
 with app.app_context():
     db.create_all()  # Creates tables if they don't exist
 
-# ---------------- HELPER FUNCTION ----------------
+# ---------------- ROUTES ----------------
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# ---------------- ROUTES ----------------
+
+
 
 @app.route('/')
 def index():
@@ -58,7 +58,7 @@ def add_post():
         title = request.form['title']
         content = request.form['content']
         author = request.form['author']
-        image_file = request.files.get('image')
+        image_file = request.files.get('image')  # get uploaded file
         image_filename = None
 
         if image_file and allowed_file(image_file.filename):
@@ -92,6 +92,10 @@ def delete_post(post_id):
     db.session.commit()
     return redirect('/')
 
+
+# @app.route('/asdfg')
+# def demo():
+#     return render_template('index.html')
 # ---------------- RUN APP ----------------
 if __name__ == '__main__':
     app.run(debug=True)
