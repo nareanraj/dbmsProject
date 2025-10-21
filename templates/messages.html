@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-xl mx-auto px-4 py-4 mt-16">
+    <h2 class="text-2xl font-bold mb-4">Messages</h2>
+    {% for message in messages %}
+        <div class="bg-white rounded-lg shadow-sm mb-4 p-4">
+            <div class="flex justify-between items-center mb-2">
+                <span class="font-medium">
+                    {% if message.sender_id == current_user.user_id %}
+                        To: {{ message.receiver.username }}
+                    {% else %}
+                        From: {{ message.sender.username }}
+                    {% endif %}
+                </span>
+                <span class="text-sm text-gray-500">
+                    {{ message.created_at.strftime('%Y-%m-%d %H:%M') }}
+                </span>
+            </div>
+            <p class="text-gray-700">{{ message.content }}</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
